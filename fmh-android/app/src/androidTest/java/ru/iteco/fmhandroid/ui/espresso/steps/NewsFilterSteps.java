@@ -6,39 +6,39 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.NewsFilterScreen;
 
 public class NewsFilterSteps {
     NewsFilterScreen NewsFilterScreen = new NewsFilterScreen();
 
-    @Step("Ввести начальную дату публикации")
     public void enterPublishDateStart(String text) {
+        Allure.step("Ввести начальную дату публикации");
         NewsFilterScreen.publishDateStart.perform(replaceText(text));
     }
 
-    @Step("Ввести конечную дату публикации")
     public void enterPublishDateEnd(String text) {
+        Allure.step("Ввести конечную дату публикации");
         NewsFilterScreen.publishDateEnd.perform(replaceText(text));
     }
 
-    @Step("Отфильтровать")
     public void clickFilter() {
+        Allure.step("Отфильтровать");
         NewsFilterScreen.buttonFilter.perform(click());
     }
 
-    @Step("Кликнуть чекбокс активные")
     public void clickCheckboxActive() {
+        Allure.step("Кликнуть чекбокс активные");
         NewsFilterScreen.checkboxActive.perform(click());
     }
 
-    @Step("Кликнуть чекбокс не активные")
     public void clickCheckboxNotActive() {
+        Allure.step("Кликнуть чекбокс не активные");
         NewsFilterScreen.checkboxNotActive.perform(click());
     }
 
-    @Step("Проверить чекбокс активные")
     public void checkCheckboxActive(boolean checked) {
+        Allure.step("Проверить чекбокс активные");
         if (checked) {
             NewsFilterScreen.checkboxActive.check(matches(isChecked()));
         } else {
@@ -46,8 +46,8 @@ public class NewsFilterSteps {
         }
     }
 
-    @Step("Проверить чекбокс не активные")
     public void checkCheckboxNotActive(boolean checked) {
+        Allure.step("Проверить чекбокс неактивные");
         if (checked) {
             NewsFilterScreen.checkboxNotActive.check(matches(isChecked()));
         } else {

@@ -7,51 +7,51 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.AboutScreen;
 
 public class AboutSteps {
     AboutScreen AboutScreen = new AboutScreen();
 
-    @Step("Проверка version")
     public void checkVersionTitle() {
+        Allure.step("Проверка version");
         AboutScreen.versionTitle.check(matches(allOf(withText("Version:"), isDisplayed())));
         AboutScreen.version.check(matches(allOf(withText("1.0.0"), isDisplayed())));
     }
 
-    @Step("Проверка privacyPolicy")
     public void checkPrivacyPolicy() {
+        Allure.step("Проверка privacyPolicy");
         AboutScreen.privacyPolicy.check(matches(allOf(withText("https://vhospice.org/#/privacy-policy/"),
                 isDisplayed(), isClickable())));
     }
 
-    @Step("Кликнуть privacyPolicy")
     public void clickPrivacyPolicy() {
+        Allure.step("Кликнуть privacyPolicy");
         AboutScreen.privacyPolicy.check(matches(allOf(withText("https://vhospice.org/#/privacy-policy/")))).perform(click());
     }
 
-    @Step("Кликнуть termsUrl")
     public void clickTermsUrl() {
+        Allure.step("Кликнуть termsUrl");
         AboutScreen.termsUrl.perform(click());
     }
 
-    @Step("Проверка termsTitle")
     public void checkTermsTitle() {
+        Allure.step("Проверка termsTitle");
         AboutScreen.termsTitle.check(matches(allOf(withText("Terms of use:"), isDisplayed())));
     }
 
-    @Step("Проверка termsUrl")
     public void checkTermsUrl() {
+        Allure.step("Проверка termsUrl");
         AboutScreen.termsUrl.check(matches(allOf(withText("https://vhospice.org/#/terms-of-use"), isDisplayed(), isClickable())));
     }
 
-    @Step("Проверка copyright")
     public void checkCopyright() {
+        Allure.step("Проверка copyright");
         AboutScreen.copyright.check(matches(allOf(withText("© I-Teco, 2022"), isDisplayed())));
     }
 
-    @Step("Возврат к предыдущему экрану")
     public void goBack() {
+        Allure.step("Возврат к предыдущему экрану");
         AboutScreen.buttonBack.perform(click());
     }
 }

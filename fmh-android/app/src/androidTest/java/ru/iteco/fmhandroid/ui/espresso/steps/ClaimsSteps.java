@@ -9,31 +9,36 @@ import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.not;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.isDisplayedWithSwipe;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 
 import android.os.SystemClock;
 
-import io.qameta.allure.kotlin.Step;
+import androidx.test.espresso.ViewInteraction;
+
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.ClaimScreen;
 import ru.iteco.fmhandroid.ui.espresso.elements.MainScreen;
+import ru.iteco.fmhandroid.ui.espresso.resources.Resources;
 import ru.iteco.fmhandroid.ui.espresso.utils.Utils;
 
 public class ClaimsSteps {
 
     MainScreen MainScreen = new MainScreen();
     ClaimScreen ClaimScreen = new ClaimScreen();
+    Resources Resources = new Resources();
 
-    @Step("Проверка, что это экране претензий")
     public void isClaimsScreen() {
+        Allure.step("Проверка, что это экране претензий");
         ClaimScreen.claims.check(matches(isDisplayed()));
         ClaimScreen.addNewClaimButton.check(matches(isDisplayed()));
         ClaimScreen.buttonFiltering.check(matches(isDisplayed()));
         MainScreen.firstClaimExecutorName.check(matches(isDisplayed()));
     }
 
-    @Step("Открытие фильтра")
     public void openFiltering() {
+        Allure.step("Открытие фильтра");
         ClaimScreen.buttonFiltering.perform(click());
         ClaimScreen.titleFiltering.check(matches(isDisplayed()));
         ClaimScreen.open.check(matches(isDisplayed()));
@@ -42,55 +47,56 @@ public class ClaimsSteps {
         ClaimScreen.cancelled.check(matches(isDisplayed()));
     }
 
-    @Step("Отметить чекбокс в процессе")
     public void clickCheckboxInProgress() {
+        Allure.step("Отметить чекбокс в процессе");
         ClaimScreen.inProgress.perform(click());
     }
 
-    @Step("Отметить чекбокс открыт")
     public void clickCheckboxOpen() {
+        Allure.step("Отметить чекбокс открыт");
         ClaimScreen.open.perform(click());
     }
 
-    @Step("Отметить чекбокс выполнен")
     public void clickCheckboxExecuted() {
+        Allure.step("Отметить чекбокс выполнен");
         ClaimScreen.executed.perform(click());
     }
 
-    @Step("Отметить чекбокс отменен")
     public void clickCheckboxCancelled() {
+        Allure.step("Отметить чекбокс отменен");
         ClaimScreen.cancelled.perform(click());
     }
 
-    @Step("Кликнуть редактировать претензию")
     public void clickEditClaim() {
+        Allure.step("Кликнуть редактировать претензию");
+        ClaimScreen.buttonEditClaim.perform(nestedScrollTo());
         ClaimScreen.buttonEditClaim.perform(click());
     }
 
-    @Step("Кликнуть отмена")
     public void clickCancel() {
+        Allure.step("Кликнуть отмена");
         ClaimScreen.buttonCancel.perform(click());
     }
 
-    @Step("Кликнуть ОК")
     public void clickOK() {
+        Allure.step("Кликнуть ОК");
         ClaimScreen.buttonOk.perform(click());
     }
 
-    @Step("Кликнуть по кнопке с определенным названием")
     public void clickButton(String text) {
+        Allure.step("Кликнуть по кнопке с определенным названием");
         ClaimScreen.buttonText(text).perform(click());
     }
 
-    @Step("Кликнуть редактировать статус претензии")
     public void clickButtonEditStatusClaim() {
+        Allure.step("Кликнуть редактировать статус претензии");
         ClaimScreen.buttonStatusClaim.perform(nestedScrollTo());
         ClaimScreen.buttonStatusClaim.check(matches(isDisplayed()));
         ClaimScreen.buttonStatusClaim.perform(click());
     }
 
-    @Step("Проверить состояние чекбокса в процессе")
     public void checkCheckboxInProgress(boolean checked) {
+        Allure.step("Проверить состояние чекбокса в процессе");
         if (checked) {
             ClaimScreen.inProgress.check(matches(isChecked()));
         } else {
@@ -98,8 +104,8 @@ public class ClaimsSteps {
         }
     }
 
-    @Step("Проверить состояние чекбокса открыт")
     public void checkCheckboxOpen(boolean checked) {
+        Allure.step("Проверить состояние чекбокса открыт");
         if (checked) {
             ClaimScreen.open.check(matches(isChecked()));
         } else {
@@ -107,15 +113,15 @@ public class ClaimsSteps {
         }
     }
 
-    @Step("Нажать добавить комментарий к претензии")
     public void clickAddComment() {
+        Allure.step("Нажать добавить комментарий к претензии");
         SystemClock.sleep(200);
         ClaimScreen.buttonAddCommentClaim.perform(nestedScrollTo());
         ClaimScreen.buttonAddCommentClaim.perform(click());
     }
 
-    @Step("Проверить состояние чекбокса выполнен")
     public void checkCheckboxExecuted(boolean checked) {
+        Allure.step("Проверить состояние чекбокса выполнен");
         if (checked) {
             ClaimScreen.executed.check(matches(isChecked()));
         } else {
@@ -123,8 +129,8 @@ public class ClaimsSteps {
         }
     }
 
-    @Step("Проверить состояние чекбокса отменен")
     public void checkCheckboxCancelled(boolean checked) {
+        Allure.step("Проверить состояние чекбокса отменен");
         if (checked) {
             ClaimScreen.cancelled.check(matches(isChecked()));
         } else {
@@ -132,59 +138,70 @@ public class ClaimsSteps {
         }
     }
 
-    @Step("Кликнуть создать претензию")
     public void createClaim() {
+        Allure.step("Кликнуть создать претензию");
         ClaimScreen.addNewClaimButton.perform(click());
         SystemClock.sleep(1500);
     }
 
-    @Step("Найти претензию")
     public void searchClaim(int position) {
+        Allure.step("Найти претензию");
         ClaimScreen.description.perform(actionOnItemAtPosition(position, click()));
     }
 
-    @Step("Кликнуть по определенной претензии")
     public void openClaim(int index) {
+        Allure.step("Кликнуть по определенной претензии");
         ClaimScreen.claimList(index).perform(click());
     }
 
-    @Step("Проверка отображение кнопки закрыть")
     public void checkButtonClose() {
+        Allure.step("Проверка отображение кнопки закрыть");
         ClaimScreen.buttonClose.perform(nestedScrollTo());
         ClaimScreen.buttonClose.check(matches(isDisplayed()));
     }
 
-    @Step("Открытие нужной претензии")
     public void checkClaim(String text) {
+        Allure.step("Открытие нужной претензии");
         if (isDisplayedWithSwipe(onView(withText(text)), 0, true)) {
             onView(withText(text)).check(matches(isDisplayed()));
         }
     }
 
-    @Step("Проверить какой статус у претензии")
     public void checkStatusClaim(String status) {
+        Allure.step("Проверить какой статус у претензии");
         ClaimScreen.statusClaim(status).check(matches(isDisplayed()));
     }
 
-    @Step("Добавить комментарий при изменении статуса претензии")
     public void addCommentStatusChangedClaim(String text) {
+        Allure.step("Добавить комментарий при изменении статуса претензии");
         ClaimScreen.addTextCommentStatus.check(matches(isDisplayed()));
         ClaimScreen.addTextCommentStatus.perform(replaceText(text));
     }
 
-    @Step("Получить название претензии")
     public String getTextClaim() {
+        Allure.step("Получить название претензии");
         return Utils.TextHelpers.getText(ClaimScreen.textTitleClaim);
     }
 
-    @Step("Проверить отображение статусов на экране при редактировании")
     public void checkStatus(String status) {
+        Allure.step("Проверить отображение статусов на экране при редактировании");
         ClaimScreen.checkTextStatusClaim(status).check(matches(isDisplayed()));
     }
 
-    @Step("Кликнуть на нужный статус")
     public void clickStatus(String status) {
+        Allure.step("Кликнуть на нужный статус");
         ClaimScreen.checkTextStatusClaim(status).perform(click());
+    }
+
+    public void checkCommentOnClaim(String text) {
+        Allure.step("Проверка комментария к претензии");
+        ClaimScreen.comment(text).check(matches(isDisplayed()));
+    }
+
+    public void checkModifiedClaim() {
+        Allure.step("Проверка измененной претензии");
+        getTextClaim().matches(String.valueOf(not(isDisplayed())));
+        Resources.textNewClaim.matches(String.valueOf(isDisplayed()));
     }
 }
 

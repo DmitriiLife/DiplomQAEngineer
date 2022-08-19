@@ -12,38 +12,38 @@ import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 
 import androidx.test.espresso.matcher.ViewMatchers;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.EditClaimScreen;
 import ru.iteco.fmhandroid.ui.espresso.utils.Utils;
 
 public class EditClaimSteps {
     EditClaimScreen EditClaimScreen = new EditClaimScreen();
 
-    @Step("Проверка, что это экран редактирования претензии")
     public void isClaimsEditScreen() {
+        Allure.step("Проверка, что это экран редактирования претензии");
         EditClaimScreen.claimStatus.check(matches(isDisplayed()));
     }
 
-    @Step("Нажать кнопку вернуться назад")
     public void backFromClaim() {
+        Allure.step("Нажать кнопку вернуться назад");
         EditClaimScreen.backButton.perform(nestedScrollTo());
         EditClaimScreen.backButton.perform(click());
     }
 
-    @Step("Нажать кнопку редактировать комментарий")
     public void buttonEditComment(int index) {
+        Allure.step("Нажать кнопку редактировать комментарий");
         EditClaimScreen.backButton.perform(nestedScrollTo());
         EditClaimScreen.appButton(index).check(matches(isDisplayed()));
         EditClaimScreen.appButton(index).perform(click());
     }
 
-    @Step("Получить название комментария")
     public String getTextComment() {
+        Allure.step("Получить название комментария");
         return Utils.TextHelpers.getText(EditClaimScreen.textDescription);
     }
 
-    @Step("Открытие нужной претензии")
     public void checkTextDescription(String text, boolean checked) {
+        Allure.step("Открытие нужной претензии");
         if (checked) {
             onView(withText(text)).check(matches(isDisplayed()));
         } else {

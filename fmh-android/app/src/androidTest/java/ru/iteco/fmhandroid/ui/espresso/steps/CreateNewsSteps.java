@@ -6,71 +6,70 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.Matchers.allOf;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.CreateNewsScreen;
 
 public class CreateNewsSteps {
 
     CreateNewsScreen CreateNewsScreen = new CreateNewsScreen();
 
-    @Step("Проверка, что это экран создания новости")
     public void isCreateNewsScreen() {
+        Allure.step("Проверка, что это экран создания новости");
         CreateNewsScreen.title.check(matches(withText("Creating")));
         CreateNewsScreen.subTitle.check(matches(withText("News")));
     }
 
-    @Step("Проверка, что это экран редактирования новости")
     public void isEditNewsScreen() {
+        Allure.step("Проверка, что это экран редактирования новости");
         CreateNewsScreen.title.check(matches(withText("Editing")));
         CreateNewsScreen.subTitle.check(matches(withText("News")));
     }
 
-    @Step("Выбрать категорию новости")
     public void selectNewsCategory() {
+        Allure.step("Выбрать категорию новости");
         CreateNewsScreen.categoryList.perform(click());
         CreateNewsScreen.newsTitle.perform(click());
     }
 
-    @Step("Ввести категорию новости")
     public void enterNewsCategory(String text) {
+        Allure.step("Ввести категорию новости");
         CreateNewsScreen.categoryList.perform(replaceText(text), closeSoftKeyboard());
     }
 
-    @Step("Ввести заголовок")
     public void enterNewsTitle(String text) {
+        Allure.step("Ввести заголовок");
         CreateNewsScreen.newsTitle.perform(replaceText(text), closeSoftKeyboard());
     }
 
-    @Step("Ввести дату публикации")
     public void enterNewsPublicationDate(String text) {
+        Allure.step("Ввести дату публикации");
         CreateNewsScreen.newsDate.perform(replaceText(text));
     }
 
-    @Step("Ввести время")
     public void enterNewsTime(String text) {
+        Allure.step("Ввести время");
         CreateNewsScreen.newsTime.perform(replaceText(text));
     }
 
-    @Step("Ввести описание")
     public void enterNewsDescription(String text) {
+        Allure.step("Ввести описание");
         CreateNewsScreen.newsDescription.perform(replaceText(text), closeSoftKeyboard());
     }
 
-    @Step("Проверить заголовок")
     public void checkNewsTitle(String text) {
+        Allure.step("Проверить заголовок");
         CreateNewsScreen.newsTitle.check(matches(withText(text)));
     }
 
-    @Step("Проверить переключатель")
     public void checkNewsSwitcher() {
+        Allure.step("Проверить переключатель");
         CreateNewsScreen.newsSwitcher.check(matches(allOf(withText("Active"), isDisplayed())));
     }
 
-    @Step("Щелкнуть переключатель")
     public void clickNewsSwitcher() {
+        Allure.step("Щелкнуть переключатель");
         CreateNewsScreen.newsSwitcher.perform(click());
     }
 }

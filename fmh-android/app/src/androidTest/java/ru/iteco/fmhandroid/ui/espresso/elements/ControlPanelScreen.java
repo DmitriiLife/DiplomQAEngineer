@@ -6,8 +6,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static ru.iteco.fmhandroid.ui.espresso.test.AppActivityTest.newNewsTitle;
-import static ru.iteco.fmhandroid.ui.espresso.test.AppActivityTest.newsDescriptionString;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.withIndex;
 
 import androidx.test.espresso.ViewInteraction;
@@ -39,6 +37,10 @@ public class ControlPanelScreen {
 
     public ViewInteraction newsEdit(String text) {
         return onView(allOf(withId(R.id.edit_news_item_image_view), withParent(withParent(allOf(withId(R.id.news_item_material_card_view), withChild(withChild(withText(text))))))));
+    }
+
+    public ViewInteraction newsTitle(String text) {
+        return onView(allOf(withId(R.id.news_item_title_text_view), withText(text)));
     }
 
 }

@@ -5,54 +5,75 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import io.qameta.allure.kotlin.Step;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.NewsScreen;
 import ru.iteco.fmhandroid.ui.espresso.utils.Utils;
 
 public class NewsSteps {
     NewsScreen NewsScreen = new NewsScreen();
+    ControlPanelSteps ControlPanelSteps = new ControlPanelSteps();
 
-    @Step("Проверить, что это экран новостей")
+    public void checkSorting() {
+        Allure.step("Проверка сортировки новостей");
+        String firstNews = getFirstNewsTitle();
+        String firstPublicationDate = ControlPanelSteps.getFirstNewsPublicationDate();
+        String firstCreationDate = ControlPanelSteps.getFirstNewsCreationDate();
+        clickSortButton();
+        String lastPublicationDate = ControlPanelSteps.getLastNewsPublicationDate();
+        clickSortButton();
+        String firstNewsAgain = getFirstNewsAgainTitle();
+        String firstPublicationDateAgain = ControlPanelSteps.getFirstNewsPublicationDateAgain();
+        String firstCreationDateAgain = ControlPanelSteps.getFirstNewsCreationDateAgain();
+        assertEquals(firstNews, firstNewsAgain);
+        assertEquals(firstPublicationDate, firstPublicationDateAgain);
+        assertEquals(firstCreationDate, firstCreationDateAgain);
+        assertNotEquals(firstPublicationDate, lastPublicationDate);
+    }
+
     public void isNewsScreen() {
+        Allure.step("Проверить, что это экран новостей");
         NewsScreen.news.check(matches(isDisplayed()));
         NewsScreen.buttonSort.check(matches(isDisplayed()));
         NewsScreen.buttonFilter.check(matches(isDisplayed()));
         NewsScreen.buttonControlPanel.check(matches(isDisplayed()));
     }
 
-    @Step("Получить название первой новости")
     public String getFirstNewsTitle() {
+        Allure.step("Получить название первой новости");
         return Utils.TextHelpers.getText(NewsScreen.firstNews);
     }
 
-    @Step("Получить название последней новости")
     public String getLastNewsTitle() {
+        Allure.step("Получить название последней новости");
         return Utils.TextHelpers.getText(NewsScreen.lastNews);
     }
 
-    @Step("Получить название новой первой новости")
     public String getFirstNewsAgainTitle() {
+        Allure.step("Получить название новой первой новости");
         return Utils.TextHelpers.getText(NewsScreen.firstNewsAgain);
     }
 
-    @Step("Сортировать")
     public void clickSortButton() {
+        Allure.step("Сортировать");
         NewsScreen.buttonSort.perform(click());
     }
 
-    @Step("Перейти в панель управления")
     public void goToControlPanel() {
+        Allure.step("Перейти в панель управления");
         NewsScreen.buttonControlPanel.perform(click());
         NewsScreen.controlPanel.check(matches(isDisplayed()));
     }
 
-    @Step("Открыть фильтр")
     public void openFilter() {
+        Allure.step("Открыть фильтр");
         NewsScreen.buttonFilter.perform(click());
     }
 
-    @Step("Проверить дату первой новости")
     public void checkFirstNewsDate(String text) {
+        Allure.step("Проверить дату первой новости");
         NewsScreen.firstNewsDate.check(matches(withText(text)));
     }
 }

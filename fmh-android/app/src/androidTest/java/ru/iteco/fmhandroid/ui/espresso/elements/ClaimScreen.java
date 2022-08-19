@@ -29,6 +29,10 @@ public class ClaimScreen {
     public ViewInteraction textTitleClaim = onView(withId(R.id.title_text_view));
     public ViewInteraction buttonStatusClaim = onView(withId(R.id.status_processing_image_button));
 
+    public ViewInteraction comment(String text) {
+        return onView(withText(text));
+    }
+
     public ViewInteraction buttonText(String text) {
         return onView(withText(text));
     }

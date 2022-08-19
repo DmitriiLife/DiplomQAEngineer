@@ -47,9 +47,6 @@ import ru.iteco.fmhandroid.R;
 
 public class Utils {
 
-
-
-
     public static Matcher<View> withIndex(final Matcher<View> matcher, final int index) {
         return new TypeSafeMatcher<View>() {
             int currentIndex = 0;

@@ -7,27 +7,27 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 import android.os.SystemClock;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.AddNewCommentScreen;
 
 public class AddNewCommentStep {
     AddNewCommentScreen AddNewCommentScreen = new AddNewCommentScreen();
 
-    @Step("Ввод комментария к претензии")
     public void enterComment(String text) {
+        Allure.step("Ввод комментария к претензии");
         AddNewCommentScreen.comment.check(matches(isDisplayed()));
         AddNewCommentScreen.comment.perform(replaceText(text));
     }
 
-    @Step("Кликнуть сохранить")
     public void clickSave() {
+        Allure.step("Кликнуть сохранить");
         AddNewCommentScreen.buttonSave.check(matches(isDisplayed()));
         AddNewCommentScreen.buttonSave.perform(click());
         SystemClock.sleep(1500);
     }
 
-    @Step("Кликнуть отменить")
     public void clickCancel() {
+        Allure.step("Кликнуть отменить");
         AddNewCommentScreen.buttonCancel.check(matches(isDisplayed()));
         AddNewCommentScreen.buttonCancel.perform(click());
     }

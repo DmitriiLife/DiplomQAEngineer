@@ -4,42 +4,42 @@ import static androidx.test.espresso.action.ViewActions.click;
 
 import android.os.SystemClock;
 
-import io.qameta.allure.kotlin.Step;
+import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.CommonElements;
 
 public class CommonSteps {
 
     CommonElements CommonElements = new CommonElements();
 
-    @Step("Кликнуть выйти из приложения")
     public void logout() {
+        Allure.step("Кликнуть выйти из приложения");
         CommonElements.manImage.perform(click());
         CommonElements.exitButton.perform(click());
     }
 
-    @Step("Кликнуть сохранить")
     public void clickSave() {
+        Allure.step("Кликнуть сохранить");
         CommonElements.buttonSave.perform(click());
         SystemClock.sleep(1500);
     }
 
-    @Step("Кликнуть ОК")
     public void clickOK() {
+        Allure.step("Кликнуть ОК");
         CommonElements.buttonOkText.perform(click());
     }
 
-    @Step("Кликнуть отмена")
     public void clickCancel() {
+        Allure.step("Кликнуть отмена");
         CommonElements.buttonCancel.perform(click());
     }
 
-    @Step("Перейти в тематические цитаты")
     public void goToThematicQuotes() {
+        Allure.step("Перейти в тематические цитаты");
         CommonElements.thematicQuotes.perform(click());
     }
 
-    @Step("Перейти к нужному экрану через меню")
     public void goToScreen(String screen) {
+        Allure.step("Перейти к нужному экрану через меню");
         CommonElements.mainMenu.perform(click());
         switch (screen) {
             case ("Main"):
