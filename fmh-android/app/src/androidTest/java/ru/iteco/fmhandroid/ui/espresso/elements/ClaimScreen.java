@@ -1,7 +1,9 @@
 package ru.iteco.fmhandroid.ui.espresso.elements;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.withChild;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.childAtPosition;
@@ -24,6 +26,7 @@ public class ClaimScreen {
     public ViewInteraction cancelled = onView(withId(R.id.item_filter_cancelled));
     public ViewInteraction addNewClaimButton = onView(withId(R.id.add_new_claim_material_button));
     public ViewInteraction description = onView(allOf(withId(R.id.claim_list_recycler_view), childAtPosition(withId(R.id.all_claims_cards_block_constraint_layout), 4)));
+    public ViewInteraction addTextCommentStatus = onView(withId(R.id.editText));
     public ViewInteraction buttonAddCommentClaim = onView(withId(R.id.add_comment_image_button));
     public ViewInteraction buttonEditClaim = onView(withId(R.id.edit_processing_image_button));
     public ViewInteraction textTitleClaim = onView(withId(R.id.title_text_view));
@@ -49,7 +52,4 @@ public class ClaimScreen {
     public ViewInteraction checkTextStatusClaim(String status) {
         return onView(allOf(withId(android.R.id.title), withText(status)));
     }
-
-    public ViewInteraction addTextCommentStatus = onView(withId(R.id.editText));
-
 }

@@ -1,20 +1,9 @@
 package ru.iteco.fmhandroid.ui.espresso.test;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
-import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.checkClaimStatus;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.getCurrentDate;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.getCurrentTime;
@@ -24,7 +13,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 
 import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.rule.ActivityTestRule;
 
@@ -47,10 +35,10 @@ import ru.iteco.fmhandroid.ui.espresso.steps.ControlPanelSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.CreateClaimSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.CreateNewsSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.EditClaimSteps;
-import ru.iteco.fmhandroid.ui.espresso.steps.PopupWarningStep;
 import ru.iteco.fmhandroid.ui.espresso.steps.MainSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.NewsFilterSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.NewsSteps;
+import ru.iteco.fmhandroid.ui.espresso.steps.PopupWarningStep;
 import ru.iteco.fmhandroid.ui.espresso.steps.ThematicQuotesSteps;
 
 @RunWith(AllureAndroidJUnit4.class)
@@ -68,7 +56,7 @@ public class AppActivityTest {
     AboutSteps AboutSteps = new AboutSteps();
     ThematicQuotesSteps ThematicQuotesSteps = new ThematicQuotesSteps();
     AddNewCommentStep AddNewCommentStep = new AddNewCommentStep();
-    PopupWarningStep EmptyToastStep = new PopupWarningStep();
+    PopupWarningStep PopupWarningStep = new PopupWarningStep();
     Resources Resources = new Resources();
 
     @Rule
@@ -91,7 +79,6 @@ public class AppActivityTest {
     @Test
     @DisplayName("Создание претензии с пустой датой")
     public void createClaimSpaceDate() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -103,13 +90,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создание претензии с пустыми данными")
     public void createClaimEmptyData() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -121,13 +107,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(" ");
         CreateClaimSteps.enterClaimDescription(" ");
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создание претензии с пустым временем")
     public void createClaimSpaceTime() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -139,7 +124,7 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(" ");
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
     @Test
@@ -218,7 +203,7 @@ public class AppActivityTest {
         MainSteps.isMainScreen();
     }
 
-    @Test
+    @Test//забрать клаймс
     @DisplayName("Фильтр претензий")
     public void filteringClaims() {
         MainSteps.openAllClaims();
@@ -433,7 +418,7 @@ public class AppActivityTest {
         ClaimsSteps.checkCheckboxOpen(true);
         ClaimsSteps.clickOK();
         SystemClock.sleep(2000);
-        ClaimsSteps.openClaim(0);
+        ClaimsSteps.openClaimIndex(0);
         SystemClock.sleep(500);
         ClaimsSteps.checkStatusClaim("Open");
         ClaimsSteps.clickEditClaim();
@@ -455,7 +440,7 @@ public class AppActivityTest {
         ClaimsSteps.checkCheckboxOpen(true);
         ClaimsSteps.clickOK();
         SystemClock.sleep(2000);
-        ClaimsSteps.openClaim(0);
+        ClaimsSteps.openClaimIndex(0);
         ClaimsSteps.checkStatusClaim("Open");
         ClaimsSteps.clickButtonEditStatusClaim();
         ClaimsSteps.checkStatus("take to work");
@@ -478,7 +463,7 @@ public class AppActivityTest {
         ClaimsSteps.checkCheckboxOpen(true);
         ClaimsSteps.clickOK();
         SystemClock.sleep(2000);
-        ClaimsSteps.openClaim(0);
+        ClaimsSteps.openClaimIndex(0);
         SystemClock.sleep(500);
         ClaimsSteps.checkStatusClaim("Open");
         ClaimsSteps.clickButtonEditStatusClaim();
@@ -510,7 +495,7 @@ public class AppActivityTest {
         ClaimsSteps.checkCheckboxOpen(true);
         ClaimsSteps.clickOK();
         SystemClock.sleep(1000);
-        ClaimsSteps.openClaim(0);
+        ClaimsSteps.openClaimIndex(0);
         SystemClock.sleep(500);
         ClaimsSteps.checkStatusClaim("Open");
         ClaimsSteps.clickButtonEditStatusClaim();
@@ -546,20 +531,18 @@ public class AppActivityTest {
     @Test
     @DisplayName("Добавить пустой комментарий к претензии")
     public void addSpaceCommentTheClaim() {
-        ViewInteraction emptyToast = onView(withText(R.string.toast_empty_field)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.openAllClaims();
         ClaimsSteps.searchClaim(0);
         SystemClock.sleep(200);
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(" ");
         AddNewCommentStep.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.toast_empty_field, true);
     }
 
     @Test
     @DisplayName("Создание претензии с пустым описанием")
     public void createClaimSpaceDescription() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -571,13 +554,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(getCurrentTime());
         CreateClaimSteps.enterClaimDescription(" ");
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создание претензии, нажать кнопку отмена")
     public void createClaimClickButtonCancel() {
-        ViewInteraction emptyToast = onView(withText(R.string.cancellation)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -589,7 +571,7 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(getCurrentTime());
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickCancel();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.cancellation, true);
     }
 
     @Test
@@ -624,7 +606,6 @@ public class AppActivityTest {
     @Test
     @DisplayName("Создать пустую форму новости")
     public void createNewsEmptyData() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -632,13 +613,12 @@ public class AppActivityTest {
         ControlPanelSteps.createNews();
         SystemClock.sleep(1000);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создать новость, поле 'Category' оставить пустыми")
     public void createNewsCategoryEmpty() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -651,13 +631,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создать новость, поле 'Category' заполнить произвольно")
     public void createNewsCategoryArbitrarily() {
-        ViewInteraction emptyToast = onView(withText(R.string.error_saving)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -671,13 +650,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.error_saving, true);
     }
 
     @Test
     @DisplayName("Создать новость, поле 'Category' заполнить символами")
     public void createNewsCategorySymbols() {
-        ViewInteraction emptyToast = onView(withText(R.string.error_saving)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -691,13 +669,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.error_saving, true);
     }
 
     @Test
     @DisplayName("Создать новость, в поле 'Title' ввести пробел")
     public void createNewsTitleSpace() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -711,7 +688,7 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
@@ -736,7 +713,6 @@ public class AppActivityTest {
     @Test
     @DisplayName("Создать новость, в поле 'Publication date' ввести пробел")
     public void createNewsPublicationDateSpace() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -750,13 +726,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
     @DisplayName("Создать новость, в поле 'Time' ввести пробел")
     public void createNewsTimeSpace() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -770,7 +745,7 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
@@ -802,7 +777,6 @@ public class AppActivityTest {
     @Test
     @DisplayName("Создать новость, поле 'Description' оставить пустым")
     public void createNewsDescriptionEmpty() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -815,26 +789,7 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsTime(Resources.newsTime);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
-    }
-
-    @Test
-    @DisplayName("Создать новость, в поле 'Description' ввести пробел")
-    public void createNewsDescriptionSpace() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.goToControlPanel();
-        ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.createNews();
-        CreateNewsSteps.isCreateNewsScreen();
-        CreateNewsSteps.selectNewsCategory();
-        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
-        CreateNewsSteps.enterNewsPublicationDate(Resources.newsPublicationDate);
-        CreateNewsSteps.enterNewsTime(Resources.newsTime);
-        CreateNewsSteps.enterNewsDescription(" ");
-        CreateNewsSteps.checkNewsSwitcher();
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast("Fill empty fields", true);
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
     @Test
@@ -856,33 +811,9 @@ public class AppActivityTest {
         ClaimsSteps.checkClaim(Resources.titleString);
     }
 
-    @Test
-    @DisplayName("Измененить статус у претензии c 'Open' на 'Canceled'")
-    public void editStatusTheClaimOpenOnTheCanceled() {
-        MainSteps.isMainScreen();
-        MainSteps.openAllClaims();
-        ClaimsSteps.openFiltering();
-        ClaimsSteps.clickCheckboxInProgress();
-        ClaimsSteps.checkCheckboxCancelled(false);
-        ClaimsSteps.checkCheckboxExecuted(false);
-        ClaimsSteps.checkCheckboxInProgress(false);
-        ClaimsSteps.checkCheckboxOpen(true);
-        ClaimsSteps.clickOK();
-        SystemClock.sleep(2000);
-        ClaimsSteps.openClaim(0);
-        ClaimsSteps.checkStatusClaim("Open");
-        ClaimsSteps.clickButtonEditStatusClaim();
-        ClaimsSteps.checkStatus("take to work");
-        ClaimsSteps.checkStatus("Cancel");
-        ClaimsSteps.clickStatus("Cancel");
-        SystemClock.sleep(2000);
-        ClaimsSteps.checkStatusClaim("Canceled");
-    }
-
-    @Test//bug 1 +
+    @Test//bug 1
     @DisplayName("Создать новость, в поле 'Publication date' ввести символы")
     public void createNewsPublicationDateSymbols() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -896,10 +827,10 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
-    @Test//bug 2 +
+    @Test//bug 2
     @DisplayName("Создать новость, в поле 'Publication date' ввести несуществующую дату")
     public void createNewsPublicationDateNonExistent() {
         CommonSteps.goToScreen("News");
@@ -915,13 +846,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        // EmptyToastStep.checkEmptyToast(R.string.empty_fields,true);
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
-    @Test//bug 3 +
+    @Test//bug 3
     @DisplayName("Создать новость, в поле 'Publication date' ввести 'далеко-будущую' дату")
     public void createNewsPublicationDateFuture() {
-        ViewInteraction emptyToast = onView(withText(R.string.wrong_news_date_period)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -935,26 +865,24 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
     }
 
-    @Test//bug 4 +
+    @Test//bug 4
     @DisplayName("Добавить комментарий с использованием символов к претензии")
     public void addSymbolsCommentTheClaim() {
-        ViewInteraction emptyToast = onView(withText(R.string.toast_empty_field)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.openAllClaims();
         ClaimsSteps.searchClaim(0);
         SystemClock.sleep(200);
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(Resources.symbolsComment);
         AddNewCommentStep.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.toast_empty_field, true);
     }
 
-    @Test//bug 5 +
+    @Test//bug 5
     @DisplayName("Создание претензии с прошедшей датой")
     public void createClaimPastDate() {
-        ViewInteraction emptyToast = onView(withText(R.string.wrong_news_date_period)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -966,13 +894,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
     }
 
-    @Test//bug 6 +
+    @Test//bug 6
     @DisplayName("Создание претензии с 'далеко-будущей датой'")
     public void createClaimFutureDate() {
-        ViewInteraction emptyToast = onView(withText(R.string.wrong_news_date_period)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -984,13 +911,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
     }
 
-    @Test//bug 7 +
+    @Test//bug 7
     @DisplayName("Создать новость, в поле 'Publication date' ввести 'прошлую' дату")
     public void createNewsPublicationDatePast() {
-        ViewInteraction emptyToast = onView(withText(R.string.wrong_news_date_period)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -1004,13 +930,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
     }
 
-    @Test//bug 8 +
+    @Test//bug 8
     @DisplayName("Создать новость, в поле 'Time' ввести символы")
     public void createNewsTimeSymbols() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -1024,13 +949,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
-    @Test//bug 9 +
+    @Test//bug 9
     @DisplayName("Создать новость, в поле 'Description' ввести символы")
     public void createNewsDescriptionSymbols() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -1044,13 +968,12 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription("$%#%%##%&&%#&");
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
     }
 
-    @Test//bug 10 +
+    @Test//bug 10
     @DisplayName("Создание претензии, в описание ввести символы")
     public void createClaimSymbolsDescription() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -1062,13 +985,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(getCurrentTime());
         CreateClaimSteps.enterClaimDescription("№%:№%:№%:№%");
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
-    @Test//bug 11 +
+    @Test//bug 11
     @DisplayName("Создание претензии с несуществующей датой")
     public void createClaimNonExistentDate() {
-        ViewInteraction emptyToast = onView(withText(R.string.wrong_news_date_period)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -1080,13 +1002,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
     }
 
-    @Test//bug 12 +
+    @Test//bug 12
     @DisplayName("Создание претензии с несуществующим временем")
     public void createClaimNonExistentTime() {
-        ViewInteraction emptyToast = onView(withText(R.string.empty_fields)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView()))));
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
@@ -1098,10 +1019,10 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime("1111111111");
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        emptyToast.check(matches(isDisplayed()));
+        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
     }
 
-    @Test//bug 13 +
+    @Test//bug 13
     @DisplayName("Редактирование комментария к претензии")
     public void editCommentTheClaim() {
         MainSteps.isMainScreen();
@@ -1118,35 +1039,29 @@ public class AppActivityTest {
         SystemClock.sleep(500);
         MainSteps.openAllClaims();
         ClaimsSteps.checkClaim(Resources.newCommentClaim);
-        ClaimsSteps.openClaim(1);
+        ClaimsSteps.openClaimIndex(1);
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(Resources.comment);
         AddNewCommentStep.clickSave();
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(Resources.newCommentClaim);
         AddNewCommentStep.clickSave();
-        String textOldComment = EditClaimSteps.getTextComment();
-        EditClaimSteps.checkTextDescription(textOldComment, true);
+        EditClaimSteps.checkTextDescription(EditClaimSteps.getTextComment(), true);
         ClaimsSteps.checkButtonClose();
         EditClaimSteps.buttonEditComment(0);
         AddNewCommentStep.enterComment("Mea1000t");
         AddNewCommentStep.clickSave();
         ClaimsSteps.checkButtonClose();
-        EditClaimSteps.checkTextDescription(textOldComment, false);
+        EditClaimSteps.checkTextDescription(EditClaimSteps.getTextComment(), false);
     }
 
-    @Test
+    @Test//50-50
     @DisplayName("Сортировка новостей на экране новостей")
     public void newsScreenSorting() {
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
-        String firstNews = NewsSteps.getFirstNewsTitle();
-        NewsSteps.clickSortButton();
-        String lastNews = NewsSteps.getLastNewsTitle();
-        NewsSteps.clickSortButton();
-        String firstNewsAgain = NewsSteps.getFirstNewsAgainTitle();
-        assertEquals(firstNews, firstNewsAgain);
-        assertNotEquals(firstNews, lastNews);
+        NewsSteps.checkNewsScreenSorting();
+
     }
 
     @Test
@@ -1175,9 +1090,67 @@ public class AppActivityTest {
         CreateNewsSteps.checkNewsTitle(Resources.titleStringEdit);
         CreateNewsSteps.enterNewsTitle(Resources.newTitle);
         CommonSteps.clickSave();
+        ControlPanelSteps.deleteNews(Resources.newTitle);
+    }
+
+    @Test//50-50
+    @DisplayName("Создать новость, в поле 'Description' ввести пробел")
+    public void createNewsDescriptionSpace() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.goToControlPanel();
         ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.clickDeleteThisNews(Resources.newTitle);
-        CommonSteps.clickOK();
+        ControlPanelSteps.createNews();
+        CreateNewsSteps.isCreateNewsScreen();
+        CreateNewsSteps.selectNewsCategory();
+        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
+        CreateNewsSteps.enterNewsPublicationDate(Resources.newsPublicationDate);
+        CreateNewsSteps.enterNewsTime(Resources.newsTime);
+        CreateNewsSteps.enterNewsDescription(" ");
+        CreateNewsSteps.checkNewsSwitcher();
+        CommonSteps.clickSave();
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
+    }
+
+    @Test
+    @DisplayName("Создание и поиск произвольной претензии")
+    public void createArbitraryClaim() {
+        MainSteps.isMainScreen();
+        MainSteps.createClaim();
+        SystemClock.sleep(1000);
+        CreateClaimSteps.isCreateClaimsScreen();
+        CreateClaimSteps.checkClaimTitleLength();
+        CreateClaimSteps.enterClaimTitle(Resources.titleString);
+        CreateClaimSteps.enterClaimDate("01.02.1996");
+        CreateClaimSteps.enterClaimTime(Resources.newsTime);
+        CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
+        CommonSteps.clickSave();
+        SystemClock.sleep(1000);
+        MainSteps.openAllClaims();
+        ClaimsSteps.checkClaim(Resources.titleString);
+    }
+
+    @Test//50-50
+    @DisplayName("Измененить статус у претензии c 'Open' на 'Canceled'")
+    public void editStatusTheClaimOpenOnTheCanceled() {
+        createArbitraryClaim();
+        ClaimsSteps.isClaimsScreen();
+        ClaimsSteps.openFiltering();
+        ClaimsSteps.clickCheckboxInProgress();
+        ClaimsSteps.checkCheckboxCancelled(false);
+        ClaimsSteps.checkCheckboxExecuted(false);
+        ClaimsSteps.checkCheckboxInProgress(false);
+        ClaimsSteps.checkCheckboxOpen(true);
+        ClaimsSteps.clickOK();
+        SystemClock.sleep(2000);
+        ClaimsSteps.openClaimIndex(0);
+        ClaimsSteps.checkStatusClaim("Open");
+        ClaimsSteps.clickButtonEditStatusClaim();
+        ClaimsSteps.checkStatus("take to work");
+        ClaimsSteps.checkStatus("Cancel");
+        ClaimsSteps.clickStatus("Cancel");
+        SystemClock.sleep(2000);
+        ClaimsSteps.checkStatusClaim("Canceled");
     }
 }
 

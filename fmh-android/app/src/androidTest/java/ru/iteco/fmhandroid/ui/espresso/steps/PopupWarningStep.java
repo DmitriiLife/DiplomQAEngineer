@@ -8,14 +8,23 @@ import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.PopupWarningScreen;
 
 public class PopupWarningStep {
-    static PopupWarningScreen PopupWarningScreen = new PopupWarningScreen();
+    PopupWarningScreen PopupWarningScreen = new PopupWarningScreen();
 
-    public static void checkEmptyToast(String text, boolean visible) {
-        Allure.step("Проверка текста уведомления");
+    public void checkEmptyToast(int id, boolean visible) {
+        Allure.step("Проверка текста тоста");
         if (visible) {
-            PopupWarningScreen.emptyToast(text).check(matches(isDisplayed()));
+            PopupWarningScreen.emptyToast(id).check(matches(isDisplayed()));
         } else {
-            PopupWarningScreen.emptyToast(text).check(matches(not(isDisplayed())));
+            PopupWarningScreen.emptyToast(id).check(matches(not(isDisplayed())));
+        }
+    }
+
+    public void checkEmptyMessage(int id, boolean visible) {
+        Allure.step("Проверка текста сообщения");
+        if (visible) {
+            PopupWarningScreen.emptyMessage(id).check(matches(isDisplayed()));
+        } else {
+            PopupWarningScreen.emptyMessage(id).check(matches(not(isDisplayed())));
         }
     }
 }

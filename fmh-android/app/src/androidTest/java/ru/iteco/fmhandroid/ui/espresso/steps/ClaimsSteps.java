@@ -15,8 +15,6 @@ import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 
 import android.os.SystemClock;
 
-import androidx.test.espresso.ViewInteraction;
-
 import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.ClaimScreen;
 import ru.iteco.fmhandroid.ui.espresso.elements.MainScreen;
@@ -24,7 +22,6 @@ import ru.iteco.fmhandroid.ui.espresso.resources.Resources;
 import ru.iteco.fmhandroid.ui.espresso.utils.Utils;
 
 public class ClaimsSteps {
-
     MainScreen MainScreen = new MainScreen();
     ClaimScreen ClaimScreen = new ClaimScreen();
     Resources Resources = new Resources();
@@ -149,8 +146,8 @@ public class ClaimsSteps {
         ClaimScreen.description.perform(actionOnItemAtPosition(position, click()));
     }
 
-    public void openClaim(int index) {
-        Allure.step("Кликнуть по определенной претензии");
+    public void openClaimIndex(int index) {
+        Allure.step("Кликнуть по первой претензии");
         ClaimScreen.claimList(index).perform(click());
     }
 

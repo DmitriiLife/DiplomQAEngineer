@@ -13,7 +13,6 @@ import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.CreateClaimScreen;
 
 public class CreateClaimSteps {
-
     CreateClaimScreen CreateClaimScreen = new CreateClaimScreen();
 
     public void isCreateClaimsScreen() {
@@ -36,7 +35,7 @@ public class CreateClaimSteps {
 
     public void selectExecutor() {
         Allure.step("Выбрать исполнителя");
-        CreateClaimScreen.executorList.perform(click());
+        CreateClaimScreen.executorList.perform(replaceText("Иванов Даниил Данилович"));
         SystemClock.sleep(2000);
         CreateClaimScreen.claimTitle.perform(click(), closeSoftKeyboard());
     }

@@ -8,7 +8,6 @@ import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.CommonElements;
 
 public class CommonSteps {
-
     CommonElements CommonElements = new CommonElements();
 
     public void logout() {

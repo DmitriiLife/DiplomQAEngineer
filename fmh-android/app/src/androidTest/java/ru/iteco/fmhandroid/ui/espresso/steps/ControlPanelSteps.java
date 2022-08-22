@@ -8,6 +8,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.isDisplayedWithSwipe;
+import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -18,7 +19,6 @@ import ru.iteco.fmhandroid.ui.espresso.elements.NewsScreen;
 import ru.iteco.fmhandroid.ui.espresso.utils.Utils.TextHelpers;
 
 public class ControlPanelSteps {
-
     ControlPanelScreen ControlPanelScreen = new ControlPanelScreen();
     NewsScreen NewsScreen = new NewsScreen();
     CommonSteps CommonSteps = new CommonSteps();
@@ -105,6 +105,7 @@ public class ControlPanelSteps {
 
     public void clickDeleteThisNews(String text) {
         Allure.step("Удалить эту новость");
+        ControlPanelScreen.newsDelete(text).perform(nestedScrollTo());
         ControlPanelScreen.newsDelete(text).perform(click());
     }
 

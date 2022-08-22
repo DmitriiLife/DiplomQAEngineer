@@ -76,4 +76,15 @@ public class NewsSteps {
         Allure.step("Проверить дату первой новости");
         NewsScreen.firstNewsDate.check(matches(withText(text)));
     }
+
+    public void checkNewsScreenSorting() {
+        Allure.step("Проверка сортировки новостей на экране новости");
+        String firstNews = getFirstNewsTitle();
+        clickSortButton();
+        String lastNews = getLastNewsTitle();
+        clickSortButton();
+        String firstNewsAgain = getFirstNewsAgainTitle();
+        assertEquals(firstNews, firstNewsAgain);
+        assertNotEquals(firstNews, lastNews);
+    }
 }

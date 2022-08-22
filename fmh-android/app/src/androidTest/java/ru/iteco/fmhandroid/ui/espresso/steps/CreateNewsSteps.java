@@ -12,7 +12,6 @@ import io.qameta.allure.kotlin.Allure;
 import ru.iteco.fmhandroid.ui.espresso.elements.CreateNewsScreen;
 
 public class CreateNewsSteps {
-
     CreateNewsScreen CreateNewsScreen = new CreateNewsScreen();
 
     public void isCreateNewsScreen() {
