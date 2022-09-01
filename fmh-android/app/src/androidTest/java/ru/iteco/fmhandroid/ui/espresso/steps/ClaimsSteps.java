@@ -159,6 +159,7 @@ public class ClaimsSteps {
 
     public void checkClaim(String text) {
         Allure.step("Открытие нужной претензии");
+        MainScreen.allClaims.check(matches(isDisplayed()));
         if (isDisplayedWithSwipe(onView(withText(text)), 0, true)) {
             onView(withText(text)).check(matches(isDisplayed()));
         }

@@ -10,6 +10,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.isDisplayedWithSwipe;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 
+import android.os.SystemClock;
+
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.matcher.ViewMatchers;
 
@@ -103,12 +105,6 @@ public class ControlPanelSteps {
         ControlPanelScreen.buttonDeleteNews.perform(click());
     }
 
-    public void clickDeleteThisNews(String text) {
-        Allure.step("Удалить эту новость");
-        ControlPanelScreen.newsDelete(text).perform(nestedScrollTo());
-        ControlPanelScreen.newsDelete(text).perform(click());
-    }
-
     public void clickNewsTitle(String text) {
         Allure.step("Нажать на заголовок");
         ViewInteraction newsTitle = onView(withText(text));
@@ -128,7 +124,18 @@ public class ControlPanelSteps {
         Allure.step("Поиск и удаление новости");
         isControlPanel();
         if (isDisplayedWithSwipe(onView(withText(text)), 3, true)) {
+            isControlPanel();
             onView(withText(text)).check(matches(isDisplayed()));
+        }
+        ControlPanelScreen.newsDelete(text).perform(click());
+        CommonSteps.clickOK();
+    }
+
+    public void deleteNewsThis(String text, String date) {
+        Allure.step("Поиск и удаление новости");
+        isControlPanel();
+        if (isDisplayedWithSwipe(ControlPanelScreen.newsPublicationDate(date), 1, true)) {
+            ControlPanelScreen.newsPublicationDate(date).check(matches(isDisplayed()));
         }
         ControlPanelScreen.newsDelete(text).perform(click());
         CommonSteps.clickOK();

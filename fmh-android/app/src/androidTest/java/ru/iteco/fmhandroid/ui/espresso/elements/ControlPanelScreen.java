@@ -43,4 +43,8 @@ public class ControlPanelScreen {
         return onView(allOf(withId(R.id.news_item_title_text_view), withText(text)));
     }
 
+    public ViewInteraction newsPublicationDate(String date) {
+        return onView(allOf(withId(R.id.news_item_publication_date_text_view), withText(date)));
+    }
+
 }

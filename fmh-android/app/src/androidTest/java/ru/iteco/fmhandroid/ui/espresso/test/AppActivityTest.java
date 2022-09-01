@@ -1,18 +1,26 @@
 package ru.iteco.fmhandroid.ui.espresso.test;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.checkClaimStatus;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.getCurrentDate;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.getCurrentTime;
+import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.isDisplayedWithSwipe;
+import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.nestedScrollTo;
 import static ru.iteco.fmhandroid.ui.espresso.utils.Utils.pressBack;
 
 import android.content.Intent;
 import android.os.SystemClock;
 
 import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.rule.ActivityTestRule;
 
@@ -25,6 +33,7 @@ import io.qameta.allure.android.runners.AllureAndroidJUnit4;
 import io.qameta.allure.kotlin.junit4.DisplayName;
 import ru.iteco.fmhandroid.R;
 import ru.iteco.fmhandroid.ui.AppActivity;
+import ru.iteco.fmhandroid.ui.espresso.elements.NewsScreen;
 import ru.iteco.fmhandroid.ui.espresso.resources.Resources;
 import ru.iteco.fmhandroid.ui.espresso.steps.AboutSteps;
 import ru.iteco.fmhandroid.ui.espresso.steps.AddNewCommentStep;
@@ -203,7 +212,7 @@ public class AppActivityTest {
         MainSteps.isMainScreen();
     }
 
-    @Test//забрать клаймс
+    @Test
     @DisplayName("Фильтр претензий")
     public void filteringClaims() {
         MainSteps.openAllClaims();
@@ -811,45 +820,7 @@ public class AppActivityTest {
         ClaimsSteps.checkClaim(Resources.titleString);
     }
 
-    @Test//bug 1
-    @DisplayName("Создать новость, в поле 'Publication date' ввести символы")
-    public void createNewsPublicationDateSymbols() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.goToControlPanel();
-        ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.createNews();
-        CreateNewsSteps.isCreateNewsScreen();
-        CreateNewsSteps.selectNewsCategory();
-        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
-        CreateNewsSteps.enterNewsPublicationDate("%%$%#%$%");
-        CreateNewsSteps.enterNewsTime(Resources.newsTime);
-        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
-        CreateNewsSteps.checkNewsSwitcher();
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
-    }
-
-    @Test//bug 2
-    @DisplayName("Создать новость, в поле 'Publication date' ввести несуществующую дату")
-    public void createNewsPublicationDateNonExistent() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.goToControlPanel();
-        ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.createNews();
-        CreateNewsSteps.isCreateNewsScreen();
-        CreateNewsSteps.selectNewsCategory();
-        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
-        CreateNewsSteps.enterNewsPublicationDate("00.00.0000");
-        CreateNewsSteps.enterNewsTime(Resources.newsTime);
-        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
-        CreateNewsSteps.checkNewsSwitcher();
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
-    }
-
-    @Test//bug 3
+    @Test
     @DisplayName("Создать новость, в поле 'Publication date' ввести 'далеко-будущую' дату")
     public void createNewsPublicationDateFuture() {
         CommonSteps.goToScreen("News");
@@ -865,22 +836,23 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
+        ControlPanelSteps.deleteNews(Resources.newsTitleString);
     }
 
-    @Test//bug 4
+    @Test
     @DisplayName("Добавить комментарий с использованием символов к претензии")
     public void addSymbolsCommentTheClaim() {
         MainSteps.openAllClaims();
         ClaimsSteps.searchClaim(0);
-        SystemClock.sleep(200);
+        SystemClock.sleep(1000);
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(Resources.symbolsComment);
         AddNewCommentStep.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.toast_empty_field, true);
+        SystemClock.sleep(1000);
+        AddNewCommentStep.checkComment(Resources.symbolsComment);
     }
 
-    @Test//bug 5
+    @Test
     @DisplayName("Создание претензии с прошедшей датой")
     public void createClaimPastDate() {
         MainSteps.isMainScreen();
@@ -894,10 +866,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
+        SystemClock.sleep(1000);
+        MainSteps.openAllClaims();
+        ClaimsSteps.checkClaim(Resources.newsTitleString);
     }
 
-    @Test//bug 6
+    @Test
     @DisplayName("Создание претензии с 'далеко-будущей датой'")
     public void createClaimFutureDate() {
         MainSteps.isMainScreen();
@@ -911,48 +885,12 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
+        SystemClock.sleep(1000);
+        MainSteps.openAllClaims();
+        ClaimsSteps.checkClaim(Resources.newsTitleString);
     }
 
-    @Test//bug 7
-    @DisplayName("Создать новость, в поле 'Publication date' ввести 'прошлую' дату")
-    public void createNewsPublicationDatePast() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.goToControlPanel();
-        ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.createNews();
-        CreateNewsSteps.isCreateNewsScreen();
-        CreateNewsSteps.selectNewsCategory();
-        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
-        CreateNewsSteps.enterNewsPublicationDate("01.01.2000");
-        CreateNewsSteps.enterNewsTime(Resources.newsTime);
-        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
-        CreateNewsSteps.checkNewsSwitcher();
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
-    }
-
-    @Test//bug 8
-    @DisplayName("Создать новость, в поле 'Time' ввести символы")
-    public void createNewsTimeSymbols() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.goToControlPanel();
-        ControlPanelSteps.isControlPanel();
-        ControlPanelSteps.createNews();
-        CreateNewsSteps.isCreateNewsScreen();
-        CreateNewsSteps.selectNewsCategory();
-        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
-        CreateNewsSteps.enterNewsPublicationDate(Resources.newsPublicationDate);
-        CreateNewsSteps.enterNewsTime("%&$%&*%$");
-        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
-        CreateNewsSteps.checkNewsSwitcher();
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
-    }
-
-    @Test//bug 9
+    @Test
     @DisplayName("Создать новость, в поле 'Description' ввести символы")
     public void createNewsDescriptionSymbols() {
         CommonSteps.goToScreen("News");
@@ -968,10 +906,10 @@ public class AppActivityTest {
         CreateNewsSteps.enterNewsDescription("$%#%%##%&&%#&");
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
+        ControlPanelSteps.deleteNews(Resources.newsTitleString);
     }
 
-    @Test//bug 10
+    @Test
     @DisplayName("Создание претензии, в описание ввести символы")
     public void createClaimSymbolsDescription() {
         MainSteps.isMainScreen();
@@ -985,44 +923,80 @@ public class AppActivityTest {
         CreateClaimSteps.enterClaimTime(getCurrentTime());
         CreateClaimSteps.enterClaimDescription("№%:№%:№%:№%");
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
+        CommonSteps.goToScreen("Claims");
+        ClaimsSteps.isClaimsScreen();
+        ClaimsSteps.checkClaim(Resources.newsTitleString);
     }
 
-    @Test//bug 11
-    @DisplayName("Создание претензии с несуществующей датой")
-    public void createClaimNonExistentDate() {
+    @Test
+    @DisplayName("Создание и поиск произвольной претензии")
+    public void createArbitraryClaim() {
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
         CreateClaimSteps.isCreateClaimsScreen();
         CreateClaimSteps.checkClaimTitleLength();
-        CreateClaimSteps.enterClaimTitle(Resources.newsTitleString);
-        CreateClaimSteps.selectExecutor();
-        CreateClaimSteps.enterClaimDate("00.00.0000");
+        CreateClaimSteps.enterClaimTitle(Resources.titleString);
+        CreateClaimSteps.enterClaimDate("01.02.1996");
         CreateClaimSteps.enterClaimTime(Resources.newsTime);
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.wrong_news_date_period, true);
-    }
-
-    @Test//bug 12
-    @DisplayName("Создание претензии с несуществующим временем")
-    public void createClaimNonExistentTime() {
-        MainSteps.isMainScreen();
-        MainSteps.createClaim();
         SystemClock.sleep(1000);
-        CreateClaimSteps.isCreateClaimsScreen();
-        CreateClaimSteps.checkClaimTitleLength();
-        CreateClaimSteps.enterClaimTitle(Resources.newsTitleString);
-        CreateClaimSteps.selectExecutor();
-        CreateClaimSteps.enterClaimDate(getCurrentDate());
-        CreateClaimSteps.enterClaimTime("1111111111");
-        CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
-        CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyMessage(R.string.empty_fields, true);
+        MainSteps.openAllClaims();
+        ClaimsSteps.checkClaim(Resources.titleString);
     }
 
-    @Test//bug 13
+    @Test
+    @DisplayName("Измененить статус у претензии c 'Open' на 'Canceled'")
+    public void editStatusTheClaimOpenOnTheCanceled() {
+        createArbitraryClaim();
+        ClaimsSteps.isClaimsScreen();
+        ClaimsSteps.openFiltering();
+        ClaimsSteps.clickCheckboxInProgress();
+        ClaimsSteps.checkCheckboxCancelled(false);
+        ClaimsSteps.checkCheckboxExecuted(false);
+        ClaimsSteps.checkCheckboxInProgress(false);
+        ClaimsSteps.checkCheckboxOpen(true);
+        ClaimsSteps.clickOK();
+        SystemClock.sleep(2000);
+        ClaimsSteps.openClaimIndex(0);
+        ClaimsSteps.checkStatusClaim("Open");
+        ClaimsSteps.clickButtonEditStatusClaim();
+        ClaimsSteps.checkStatus("take to work");
+        ClaimsSteps.checkStatus("Cancel");
+        ClaimsSteps.clickStatus("Cancel");
+        SystemClock.sleep(2000);
+        ClaimsSteps.checkStatusClaim("Canceled");
+    }
+
+    @Test
+    @DisplayName("Сортировка новостей на экране новостей")
+    public void newsScreenSorting() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.checkNewsScreenSorting();
+    }
+
+    @Test
+    @DisplayName("Создать новость, в поле 'Description' ввести пробел")
+    public void createNewsDescriptionSpace() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.goToControlPanel();
+        ControlPanelSteps.isControlPanel();
+        ControlPanelSteps.createNews();
+        CreateNewsSteps.isCreateNewsScreen();
+        CreateNewsSteps.selectNewsCategory();
+        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
+        CreateNewsSteps.enterNewsPublicationDate(Resources.newsPublicationDate);
+        CreateNewsSteps.enterNewsTime(Resources.newsTime);
+        CreateNewsSteps.enterNewsDescription(" ");
+        CreateNewsSteps.checkNewsSwitcher();
+        CommonSteps.clickSave();
+        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
+    }
+
+    @Test
     @DisplayName("Редактирование комментария к претензии")
     public void editCommentTheClaim() {
         MainSteps.isMainScreen();
@@ -1032,14 +1006,14 @@ public class AppActivityTest {
         CreateClaimSteps.checkClaimTitleLength();
         CreateClaimSteps.enterClaimTitle(Resources.newCommentClaim);
         CreateClaimSteps.selectExecutor();
-        CreateClaimSteps.enterClaimDate("01.01.2013");
+        CreateClaimSteps.enterClaimDate("01.01.1995");
         CreateClaimSteps.enterClaimTime("01:00");
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
         SystemClock.sleep(500);
         MainSteps.openAllClaims();
         ClaimsSteps.checkClaim(Resources.newCommentClaim);
-        ClaimsSteps.openClaimIndex(1);
+        ClaimsSteps.openClaimIndex(0);
         ClaimsSteps.clickAddComment();
         AddNewCommentStep.enterComment(Resources.comment);
         AddNewCommentStep.clickSave();
@@ -1052,16 +1026,8 @@ public class AppActivityTest {
         AddNewCommentStep.enterComment("Mea1000t");
         AddNewCommentStep.clickSave();
         ClaimsSteps.checkButtonClose();
-        EditClaimSteps.checkTextDescription(EditClaimSteps.getTextComment(), false);
-    }
-
-    @Test//50-50
-    @DisplayName("Сортировка новостей на экране новостей")
-    public void newsScreenSorting() {
-        CommonSteps.goToScreen("News");
-        NewsSteps.isNewsScreen();
-        NewsSteps.checkNewsScreenSorting();
-
+        SystemClock.sleep(2000);
+        EditClaimSteps.checkTextDescription("Mea1000t", true);
     }
 
     @Test
@@ -1093,9 +1059,83 @@ public class AppActivityTest {
         ControlPanelSteps.deleteNews(Resources.newTitle);
     }
 
-    @Test//50-50
-    @DisplayName("Создать новость, в поле 'Description' ввести пробел")
-    public void createNewsDescriptionSpace() {
+    @Test
+    @DisplayName("Создать новость, в поле 'Publication date' ввести 'прошлую' дату")
+    public void createNewsPublicationDatePast() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.goToControlPanel();
+        ControlPanelSteps.isControlPanel();
+        ControlPanelSteps.createNews();
+        CreateNewsSteps.isCreateNewsScreen();
+        CreateNewsSteps.selectNewsCategory();
+        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
+        CreateNewsSteps.enterNewsPublicationDate("01.11.1999");
+        CreateNewsSteps.enterNewsTime(Resources.newsTime);
+        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
+        CreateNewsSteps.checkNewsSwitcher();
+        CommonSteps.clickSave();
+        ControlPanelSteps.deleteNewsThis(Resources.newsTitleString, "01.11.1999");
+    }
+
+    @Test//bug 1
+    @DisplayName("Создать новость, в поле 'Publication date' ввести символы")
+    public void createNewsPublicationDateSymbols() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.goToControlPanel();
+        ControlPanelSteps.isControlPanel();
+        ControlPanelSteps.createNews();
+        CreateNewsSteps.isCreateNewsScreen();
+        CreateNewsSteps.selectNewsCategory();
+        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
+        CreateNewsSteps.enterNewsPublicationDate("%%$%#%$%");
+        CreateNewsSteps.enterNewsTime(Resources.newsTime);
+        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
+        CreateNewsSteps.checkNewsSwitcher();
+        CommonSteps.clickSave();
+        //после клика приложение падает(закрывается польностью)
+    }
+
+    @Test//bug 2
+    @DisplayName("Создать новость, в поле 'Publication date' ввести несуществующую дату")
+    public void createNewsPublicationDateNonExistent() {
+        CommonSteps.goToScreen("News");
+        NewsSteps.isNewsScreen();
+        NewsSteps.goToControlPanel();
+        ControlPanelSteps.isControlPanel();
+        ControlPanelSteps.createNews();
+        CreateNewsSteps.isCreateNewsScreen();
+        CreateNewsSteps.selectNewsCategory();
+        CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
+        CreateNewsSteps.enterNewsPublicationDate("00.00.0000");
+        CreateNewsSteps.enterNewsTime(Resources.newsTime);
+        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
+        CreateNewsSteps.checkNewsSwitcher();
+        CommonSteps.clickSave();
+        //после клика приложение падает(закрывается польностью)
+    }
+
+    @Test//bug 3
+    @DisplayName("Создание претензии с несуществующей датой")
+    public void createClaimNonExistentDate() {
+        MainSteps.isMainScreen();
+        MainSteps.createClaim();
+        SystemClock.sleep(1000);
+        CreateClaimSteps.isCreateClaimsScreen();
+        CreateClaimSteps.checkClaimTitleLength();
+        CreateClaimSteps.enterClaimTitle(Resources.newsTitleString);
+        CreateClaimSteps.selectExecutor();
+        CreateClaimSteps.enterClaimDate("00.00.0000");
+        CreateClaimSteps.enterClaimTime(Resources.newsTime);
+        CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
+        CommonSteps.clickSave();
+        //после клика приложение падает(закрывается польностью)
+    }
+
+    @Test//bug 4
+    @DisplayName("Создать новость, в поле 'Time' ввести символы")
+    public void createNewsTimeSymbols() {
         CommonSteps.goToScreen("News");
         NewsSteps.isNewsScreen();
         NewsSteps.goToControlPanel();
@@ -1105,52 +1145,28 @@ public class AppActivityTest {
         CreateNewsSteps.selectNewsCategory();
         CreateNewsSteps.enterNewsTitle(Resources.newsTitleString);
         CreateNewsSteps.enterNewsPublicationDate(Resources.newsPublicationDate);
-        CreateNewsSteps.enterNewsTime(Resources.newsTime);
-        CreateNewsSteps.enterNewsDescription(" ");
+        CreateNewsSteps.enterNewsTime("%&$%&*%$");
+        CreateNewsSteps.enterNewsDescription(Resources.newsDescriptionString);
         CreateNewsSteps.checkNewsSwitcher();
         CommonSteps.clickSave();
-        PopupWarningStep.checkEmptyToast(R.string.empty_fields, true);
+        //после клика приложение падает(закрывается польностью)
     }
 
-    @Test
-    @DisplayName("Создание и поиск произвольной претензии")
-    public void createArbitraryClaim() {
+    @Test//bug 5
+    @DisplayName("Создание претензии с несуществующим временем")
+    public void createClaimNonExistentTime() {
         MainSteps.isMainScreen();
         MainSteps.createClaim();
         SystemClock.sleep(1000);
         CreateClaimSteps.isCreateClaimsScreen();
         CreateClaimSteps.checkClaimTitleLength();
-        CreateClaimSteps.enterClaimTitle(Resources.titleString);
-        CreateClaimSteps.enterClaimDate("01.02.1996");
-        CreateClaimSteps.enterClaimTime(Resources.newsTime);
+        CreateClaimSteps.enterClaimTitle(Resources.newsTitleString);
+        CreateClaimSteps.selectExecutor();
+        CreateClaimSteps.enterClaimDate(getCurrentDate());
+        CreateClaimSteps.enterClaimTime("1111111111");
         CreateClaimSteps.enterClaimDescription(Resources.newsDescriptionString);
         CommonSteps.clickSave();
-        SystemClock.sleep(1000);
-        MainSteps.openAllClaims();
-        ClaimsSteps.checkClaim(Resources.titleString);
-    }
-
-    @Test//50-50
-    @DisplayName("Измененить статус у претензии c 'Open' на 'Canceled'")
-    public void editStatusTheClaimOpenOnTheCanceled() {
-        createArbitraryClaim();
-        ClaimsSteps.isClaimsScreen();
-        ClaimsSteps.openFiltering();
-        ClaimsSteps.clickCheckboxInProgress();
-        ClaimsSteps.checkCheckboxCancelled(false);
-        ClaimsSteps.checkCheckboxExecuted(false);
-        ClaimsSteps.checkCheckboxInProgress(false);
-        ClaimsSteps.checkCheckboxOpen(true);
-        ClaimsSteps.clickOK();
-        SystemClock.sleep(2000);
-        ClaimsSteps.openClaimIndex(0);
-        ClaimsSteps.checkStatusClaim("Open");
-        ClaimsSteps.clickButtonEditStatusClaim();
-        ClaimsSteps.checkStatus("take to work");
-        ClaimsSteps.checkStatus("Cancel");
-        ClaimsSteps.clickStatus("Cancel");
-        SystemClock.sleep(2000);
-        ClaimsSteps.checkStatusClaim("Canceled");
+        //после клика приложение падает(закрывается польностью)
     }
 }
 

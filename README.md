@@ -1,5 +1,3 @@
-## Работа в процессе
-
 ### Процедура запуска тестов
 1. Выполнить git clone https://github.com/DmitriiLife/DiplomQAEngineer;
 2. Открыть проект в Android Studio;

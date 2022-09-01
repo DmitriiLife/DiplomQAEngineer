@@ -20,6 +20,7 @@ android {
         versionCode 14
         versionName "1.0.0"
         testInstrumentationRunner "io.qameta.allure.android.runners.AllureAndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     compileOptions {
